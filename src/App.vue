@@ -249,6 +249,11 @@ const dates = computed(() => {
     if(key.includes("Z")) {
       key = key.slice(0, -10)
     }
+    if(key.includes("/")) {
+      var dateArr = key.split("/",3);
+      var yearArr = dateArr[2].split(" ");
+      key = `${yearArr[0]}-${dateArr[1]}`;
+    }
     if(key.length == 19) {
       key = key.slice(0, -12)
     }
