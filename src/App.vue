@@ -442,7 +442,7 @@ const assignCategories = (element) => {
     
     <div class="my-8">
       <p>Results: {{ filtered.length }}</p>
-      <ul>
+      <ul class="mb-4">
         <!-- <li v-if="route.query.tier">Tier: {{ route.query.tier }}</li> -->
         <li v-if="route.query.platform">OS: {{ route.query.platform }} <router-link :to="{ name: 'home', query: {...route.query, ...{ platform: null }} }">Clear</router-link></li>
         <li v-if="route.query.version">App Version: {{ route.query.version }} <router-link :to="{ name: 'home', query: {...route.query, ...{ version: null }} }">Clear</router-link></li>
@@ -450,6 +450,25 @@ const assignCategories = (element) => {
         <li v-if="route.query.rating">Rating: {{ route.query.rating }} <router-link :to="{ name: 'home', query: {...route.query, ...{ rating: null }} }">Clear</router-link></li>
         <li v-if="route.query.word">Word: {{ route.query.word }} <router-link :to="{ name: 'home', query: {...route.query, ...{ word: null }} }">Clear</router-link></li>
       </ul>
+
+      <div>
+        <div v-for="(value, key) in ratings" :key="key">
+          <div
+            :style="`width: ${value}px`"
+            :class="{
+              'bg-red-100': key == 1,
+              'bg-orange-100': key == 2,
+              'bg-yellow-100': key == 3,
+              'bg-blue-100': key == 4,
+              'bg-green-100': key == 5
+            }"
+          >
+            <p class="block">{{ key }}</p>
+            <small class="block">({{ Math.round(100*(value/filtered.length)) }}%)</small>
+          </div>
+        </div>
+      </div>
+
     </div>
 
 
