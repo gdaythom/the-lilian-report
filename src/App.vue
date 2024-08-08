@@ -289,7 +289,6 @@ const ratings = computed(() => {
 });
 
 
-
 const fileProcessed = (element) => {
   
   //Remove all \n within double quotes
@@ -313,57 +312,65 @@ const fileProcessed = (element) => {
   });
 }
 
-const assignCategories = (element) => {
-  var elementCategories = [];
+const themes = [
+  {
+    key: 'Design',
+    options: ['unintuitive', 'unclear', 'navigate']
+  },
+  {
+    key: 'Bugs',
+    options: ['slow', 'bug', 'bugs', 'error', 'errors']
+  },
+  {
+    key: 'Stability',
+    options: ['crash', 'crashes', 'freeze', 'freezes', 'slow', 'bug', 'bugs', 'closing']
+  },
+  {
+    key: 'Auth',
+    options: ['log', 'logged', 'login', 'logout']
+  },
+  {
+    key: 'Boarding',
+    options: ['boarding', 'pass', 'boardingpass']
+  },
+  {
+    key: 'Seating',
+    options: ['seat', 'seats', 'seating', 'economy', 'economyx']
+  },
+  {
+    key: 'Velocity',
+    options: ['status', 'credits', 'points', 'frequent', 'flyer', 'member']
+  },
+  {
+    key: 'Flight',
+    options: ['cancelled', 'cancel', 'delayed', 'delay']
+  },
+  {
+    key: 'Check-in',
+    options: ['check', 'checkin', 'checked', 'checkedin']
+  }
+];
 
-  const categories = [
-    {
-      key: 'Design',
-      options: ['unintuitive', 'unclear', 'navigate']
-    },
-    {
-      key: 'Bugs',
-      options: ['slow', 'bug', 'bugs', 'error', 'errors']
-    },
-    {
-      key: 'Stability',
-      options: ['crash', 'crashes', 'freeze', 'freezes', 'slow', 'bug', 'bugs', 'closing']
-    },
-    {
-      key: 'Auth',
-      options: ['log', 'logged', 'login', 'logout']
-    },
-    {
-      key: 'Boarding',
-      options: ['boarding', 'pass', 'boardingpass']
-    },
-    {
-      key: 'Seating',
-      options: ['seat', 'seats', 'seating', 'economy', 'economyx']
-    },
-    {
-      key: 'Velocity',
-      options: ['status', 'credits', 'points', 'frequent', 'flyer', 'member']
-    },
-    {
-      key: 'Flight',
-      options: ['cancelled', 'cancel', 'delayed', 'delay']
-    },
-    {
-      key: 'Check-in',
-      options: ['check', 'checkin', 'checked', 'checkedin']
-    }
-  ];
+const reviewThemes = computed(() => {
+  let value = filtered.value.map(item => {
+    return item["Q4 - Could you share more information about your experience with the Virgin Aust..."];
+  });
+
+  return assignThemes(value.join(', '));
+});
+
+const assignThemes = (element) => {
+  var elementThemes = [];
   
-  categories.forEach((item) => {
+  themes.forEach((item) => {
     item.options.forEach((option) => {
     if(element.toLowerCase().indexOf(option) !== -1) {
-      elementCategories.push(item.key);
+      elementThemes.push(item.key);
     }
     });
   })
 
-  return [...new Set(elementCategories)].join(', ');
+  return [...new Set(elementThemes)].join(', ');
 }
 
 </script>
@@ -470,9 +477,13 @@ const assignCategories = (element) => {
       </div>
 
     </div>
-
+    <div class="mb-8" v-if='!route.query.rating || route.query.rating && route.query.rating < 3'>
+      <p>Themes</p>
+      {{ reviewThemes }}
+    </div>
 
     <div class="mb-8">
+      <p>Words</p>
       <span v-for="(value, key) in wordCloud" :key="key">
 
         <router-link class="border p-2 inline-block" v-if="value > 4" :to="{ name: 'home', query: {...route.query, ...{ word: key.slice(1) }} }">
@@ -499,7 +510,7 @@ const assignCategories = (element) => {
           </p>
           <p>
             <span v-if='value["App rating numeric"] < 3'>
-              {{ assignCategories(value["Q4 - Could you share more information about your experience with the Virgin Aust..."]) }}
+              {{ assignThemes(value["Q4 - Could you share more information about your experience with the Virgin Aust..."]) }}
             </span>
           </p>
           <p>
