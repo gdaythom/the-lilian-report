@@ -363,11 +363,26 @@ const reviewThemes = computed(() => {
   for (const num of filteredResults) {
     themeCounts[num] = themeCounts[num] ? themeCounts[num] + 1 : 1;
   }
+
   var themeResults = [];
   for (const [key, value] of Object.entries(themeCounts)) {
-    themeResults.push(`${key} (${value})`);
+    var result = themes.filter(obj => {
+      return obj.key === key
+    })
+    themeResults.push({
+      name: key,
+      keywords: result[0].options,
+      count: value
+    });
   }
-  return themeResults.join(', ');
+
+
+  return themeResults;
+  // var themeResults = [];
+  // for (const [key, value] of Object.entries(themeCounts)) {
+  //   themeResults.push(`${key} (${value})`);
+  // }
+  // return themeResults.join(', ');
 });
 
 const assignThemes = (element) => {
@@ -459,6 +474,7 @@ const assignThemes = (element) => {
     
     <div class="my-8">
       <p>Results: {{ filtered.length }}</p>
+      <p>Filters:</p>
       <ul class="mb-4">
         <!-- <li v-if="route.query.tier">Tier: {{ route.query.tier }}</li> -->
         <li v-if="route.query.platform">OS: {{ route.query.platform }} <router-link :to="{ name: 'home', query: {...route.query, ...{ platform: null }} }">Clear</router-link></li>
@@ -469,6 +485,7 @@ const assignThemes = (element) => {
       </ul>
 
       <div>
+        <p>Rating Split</p>
         <div v-for="(value, key) in ratings" :key="key">
           <div
             :style="`width: ${value}px`"
@@ -489,7 +506,16 @@ const assignThemes = (element) => {
     </div>
     <div class="mb-8" v-if='!route.query.rating || route.query.rating && route.query.rating < 3'>
       <p>Themes</p>
-      {{ reviewThemes }}
+      <div v-for="(value, key) in reviewThemes" :key="key">
+        <p>
+          {{ value.name }} ({{ value.count }}): 
+          <span v-for="(value, key) in value.keywords" :key="key">
+            <router-link class="border p-2 inline-block" :to="{ name: 'home', query: {...route.query, ...{ word: value }} }">
+              {{ value }}
+            </router-link>
+          </span>
+        </p>
+      </div>
     </div>
 
     <div class="mb-8">
