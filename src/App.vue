@@ -352,11 +352,22 @@ const themes = [
 ];
 
 const reviewThemes = computed(() => {
-  let value = filtered.value.map(item => {
-    return item["Q4 - Could you share more information about your experience with the Virgin Aust..."];
+  var results = [];
+  filtered.value.forEach((item) => {
+    assignThemes(item["Q4 - Could you share more information about your experience with the Virgin Aust..."]).split(', ').forEach((item) => {
+      results.push(item)
+    });
   });
-
-  return assignThemes(value.join(', '));
+  var filteredResults = results.filter(elm => elm);
+  const themeCounts = {};
+  for (const num of filteredResults) {
+    themeCounts[num] = themeCounts[num] ? themeCounts[num] + 1 : 1;
+  }
+  var themeResults = [];
+  for (const [key, value] of Object.entries(themeCounts)) {
+    themeResults.push(`${key} (${value})`);
+  }
+  return themeResults.join(', ');
 });
 
 const assignThemes = (element) => {
@@ -368,8 +379,7 @@ const assignThemes = (element) => {
       elementThemes.push(item.key);
     }
     });
-  })
-
+  });
   return [...new Set(elementThemes)].join(', ');
 }
 
@@ -509,7 +519,7 @@ const assignThemes = (element) => {
             {{ value["Q4 - Could you share more information about your experience with the Virgin Aust..."] }}
           </p>
           <p>
-            <span v-if='value["App rating numeric"] < 3'>
+            <span v-if='value["App rating numeric"] < 6'>
               {{ assignThemes(value["Q4 - Could you share more information about your experience with the Virgin Aust..."]) }}
             </span>
           </p>
